@@ -1,0 +1,1909 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BONITO | Kasiyer POS & Hesap Sistemi</title>
+  
+  <!-- Google Fonts: DM Serif Display & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      /* Bonito Orijinal Tema Renkleri - Sıfır Efekt / Maksimum Kontrast */
+      --bonito-brown: #7D3E1B;
+      --bonito-brown-dark: #4E230C;
+      --bonito-brown-light: #A3572D;
+      --bonito-cream: #F5ECE4;
+      --bonito-cream-soft: #FAF4EE;
+      --bonito-bg: #FBF8F5;
+      --bonito-surface: #FFFFFF;
+      --bonito-text: #221A15;
+      --bonito-muted: #7A6D63;
+      --bonito-border: #E8DCCF;
+      --bonito-border-strong: #D2BFA9;
+      --bonito-accent: #2A7E56;
+      --bonito-accent-bg: #E8F5EE;
+      --bonito-danger: #B91C1C;
+      --bonito-danger-bg: #FEE2E2;
+      --bonito-warning: #B45309;
+      --bonito-warning-bg: #FEF3C7;
+    }
+
+    /* SIFIR ANİMASYON KURALI: Hiçbir transition, animation, transform veya blur yok */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      transition: none !important;
+      animation: none !important;
+      transform: none !important;
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bonito-bg);
+      color: var(--bonito-text);
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      font-variant-numeric: tabular-nums;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      user-select: none;
+    }
+
+    /* 1. ÜST KASA BARI */
+    .pos-topbar {
+      background: var(--bonito-brown-dark);
+      color: #FFFFFF;
+      padding: 10px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      border-bottom: 2px solid var(--bonito-brown);
+      flex-wrap: wrap;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-logo-svg {
+      width: 46px;
+      height: 32px;
+      flex-shrink: 0;
+    }
+
+    .brand-name {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 24px;
+      letter-spacing: 2px;
+      color: var(--bonito-cream);
+      line-height: 1;
+    }
+
+    .brand-meta {
+      font-size: 11px;
+      color: #DECAB8;
+      font-weight: 600;
+      margin-top: 2px;
+    }
+
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .clock-badge {
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--bonito-cream);
+    }
+
+    .top-btn {
+      background: var(--bonito-cream);
+      color: var(--bonito-brown-dark);
+      border: 1px solid var(--bonito-border);
+      padding: 7px 13px;
+      border-radius: 8px;
+      font-size: 12.5px;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: inherit;
+    }
+
+    .top-btn:hover {
+      background: #FFFFFF;
+    }
+
+    .top-btn.secondary {
+      background: var(--bonito-brown);
+      color: #FFFFFF;
+      border-color: var(--bonito-brown-light);
+    }
+
+    .top-btn.secondary:hover {
+      background: var(--bonito-brown-light);
+    }
+
+    /* 2. ANA POS İKİ SÜTUNLU İSKELET */
+    .pos-workspace {
+      display: grid;
+      grid-template-columns: 1fr 430px;
+      gap: 16px;
+      padding: 14px 18px;
+      flex: 1;
+      max-width: 1600px;
+      width: 100%;
+      margin: 0 auto;
+      align-items: start;
+    }
+
+    @media (max-width: 1080px) {
+      .pos-workspace {
+        grid-template-columns: 1fr 380px;
+      }
+    }
+
+    @media (max-width: 860px) {
+      .pos-workspace {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* SOL PANEL: FİLTRELER, HIZLI EKLEME VE ÜRÜN IZGARASI */
+    .catalog-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .controls-bar {
+      background: var(--bonito-surface);
+      border: 1.5px solid var(--bonito-border);
+      border-radius: 12px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .category-tabs-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .cat-tab {
+      background: var(--bonito-cream-soft);
+      border: 1.5px solid var(--bonito-border);
+      color: var(--bonito-brown-dark);
+      padding: 9px 16px;
+      border-radius: 8px;
+      font-size: 13.5px;
+      font-weight: 800;
+      cursor: pointer;
+      font-family: inherit;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .cat-tab.active {
+      background: var(--bonito-brown);
+      color: #FFFFFF;
+      border-color: var(--bonito-brown-dark);
+    }
+
+    .search-and-custom-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+    }
+
+    @media (max-width: 640px) {
+      .search-and-custom-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .search-box {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .search-input {
+      width: 100%;
+      height: 40px;
+      padding: 0 36px 0 12px;
+      border: 1.5px solid var(--bonito-border-strong);
+      border-radius: 8px;
+      font-size: 13.5px;
+      font-weight: 600;
+      font-family: inherit;
+      color: var(--bonito-text);
+      background: var(--bonito-bg);
+      outline: none;
+    }
+
+    .search-input:focus {
+      border-color: var(--bonito-brown);
+      background: #FFFFFF;
+    }
+
+    .search-clear {
+      position: absolute;
+      right: 8px;
+      background: var(--bonito-cream);
+      border: none;
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      font-weight: 800;
+      color: var(--bonito-brown-dark);
+      cursor: pointer;
+      display: none;
+    }
+
+    /* Özel Tutar / Ekstra Ekleme Formu */
+    .custom-item-form {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .custom-input-name {
+      width: 145px;
+      height: 40px;
+      padding: 0 10px;
+      border: 1.5px solid var(--bonito-border-strong);
+      border-radius: 8px;
+      font-size: 12.5px;
+      font-weight: 600;
+      font-family: inherit;
+      outline: none;
+    }
+
+    .custom-input-price {
+      width: 85px;
+      height: 40px;
+      padding: 0 10px;
+      border: 1.5px solid var(--bonito-border-strong);
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 800;
+      font-family: inherit;
+      outline: none;
+    }
+
+    .btn-custom-add {
+      height: 40px;
+      background: var(--bonito-cream);
+      border: 1.5px solid var(--bonito-brown);
+      color: var(--bonito-brown-dark);
+      padding: 0 12px;
+      border-radius: 8px;
+      font-size: 12.5px;
+      font-weight: 800;
+      cursor: pointer;
+      white-space: nowrap;
+      font-family: inherit;
+    }
+
+    .btn-custom-add:hover {
+      background: var(--bonito-brown);
+      color: #FFFFFF;
+    }
+
+    /* KATEGORİ BAŞLIKLARI VE ÜRÜN KARTLARI IZGARASI */
+    .category-block {
+      margin-bottom: 14px;
+    }
+
+    .category-block-header {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 20px;
+      color: var(--bonito-brown-dark);
+      padding-bottom: 6px;
+      margin-bottom: 10px;
+      border-bottom: 2px solid var(--bonito-border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .category-block-header span.sub {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--bonito-muted);
+    }
+
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(215px, 1fr));
+      gap: 10px;
+    }
+
+    /* Ürün Kartı - Hızlı Tıklama Odaklı */
+    .pos-product-card {
+      background: var(--bonito-surface);
+      border: 2px solid var(--bonito-border);
+      border-radius: 10px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 8px;
+      cursor: pointer;
+      position: relative;
+      min-height: 112px;
+    }
+
+    .pos-product-card:hover {
+      border-color: var(--bonito-brown);
+      background: var(--bonito-cream-soft);
+    }
+
+    .pos-product-card.in-ticket {
+      border-color: var(--bonito-brown);
+      background: #FFF9F4;
+      border-width: 2px;
+    }
+
+    .card-top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .menu-num-tag {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 800;
+      background: var(--bonito-cream);
+      color: var(--bonito-brown-dark);
+      padding: 2px 6px;
+      border-radius: 4px;
+      margin-bottom: 3px;
+      text-transform: uppercase;
+    }
+
+    .product-name {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--bonito-text);
+      line-height: 1.25;
+    }
+
+    .product-price-badge {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--bonito-brown-dark);
+      background: var(--bonito-cream);
+      padding: 4px 8px;
+      border-radius: 6px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .product-ingredients {
+      font-size: 11.5px;
+      color: var(--bonito-muted);
+      line-height: 1.35;
+      font-weight: 500;
+    }
+
+    /* Alt Çeşit / Aroma Hızlı Butonları (Meyve Suyu, Süt, Meyveli Soda için) */
+    .variants-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 4px;
+      padding-top: 6px;
+      border-top: 1px dashed var(--bonito-border);
+    }
+
+    .variant-chip {
+      background: #FFFFFF;
+      border: 1px solid var(--bonito-brown-light);
+      color: var(--bonito-brown-dark);
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .variant-chip:hover {
+      background: var(--bonito-brown);
+      color: #FFFFFF;
+    }
+
+    /* Kart Üzerindeki Adet ve Hızlı Eksiltme Kontrolleri */
+    .card-ticket-controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 4px;
+      padding-top: 6px;
+      border-top: 1px solid var(--bonito-border);
+    }
+
+    .in-ticket-Readout {
+      background: var(--bonito-brown);
+      color: #FFFFFF;
+      font-size: 12px;
+      font-weight: 800;
+      padding: 3px 9px;
+      border-radius: 6px;
+    }
+
+    .btn-card-minus {
+      background: var(--bonito-danger-bg);
+      color: var(--bonito-danger);
+      border: 1px solid #FCA5A5;
+      padding: 3px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .btn-card-minus:hover {
+      background: var(--bonito-danger);
+      color: #FFFFFF;
+    }
+
+    /* 3. SAĞ PANEL: ADİSYON, TOPLAM HESAP VE PARA ÜSTÜ HESAPLAYICI */
+    .register-panel {
+      background: var(--bonito-surface);
+      border: 2px solid var(--bonito-border-strong);
+      border-radius: 12px;
+      position: sticky;
+      top: 14px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .register-header {
+      background: var(--bonito-cream);
+      padding: 12px 16px;
+      border-bottom: 1.5px solid var(--bonito-border-strong);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .register-title {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 20px;
+      color: var(--bonito-brown-dark);
+    }
+
+    .register-count-pill {
+      background: var(--bonito-brown);
+      color: #FFFFFF;
+      font-size: 12px;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 6px;
+    }
+
+    /* Adisyon Ürün Listesi */
+    .ticket-items-list {
+      max-height: 270px;
+      min-height: 150px;
+      overflow-y: auto;
+      padding: 8px 14px;
+      border-bottom: 1.5px solid var(--bonito-border);
+    }
+
+    .ticket-empty {
+      text-align: center;
+      padding: 36px 12px;
+      color: var(--bonito-muted);
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .ticket-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--bonito-cream);
+    }
+
+    .ticket-row:last-child {
+      border-bottom: none;
+    }
+
+    .ticket-item-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .ticket-item-name {
+      font-size: 13.5px;
+      font-weight: 800;
+      color: var(--bonito-text);
+      word-break: break-word;
+    }
+
+    .ticket-item-unit {
+      font-size: 11.5px;
+      color: var(--bonito-muted);
+      font-weight: 600;
+    }
+
+    .ticket-row-controls {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      flex-shrink: 0;
+    }
+
+    .qty-ctrl-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      border: 1.5px solid var(--bonito-border-strong);
+      background: var(--bonito-cream-soft);
+      color: var(--bonito-brown-dark);
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: inherit;
+    }
+
+    .qty-ctrl-btn:hover {
+      background: var(--bonito-brown);
+      color: #FFFFFF;
+      border-color: var(--bonito-brown);
+    }
+
+    .qty-val {
+      min-width: 24px;
+      text-align: center;
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .ticket-line-total {
+      min-width: 68px;
+      text-align: right;
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--bonito-brown-dark);
+    }
+
+    .btn-remove-line {
+      width: 26px;
+      height: 26px;
+      border-radius: 6px;
+      border: 1px solid #FCA5A5;
+      background: var(--bonito-danger-bg);
+      color: var(--bonito-danger);
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      margin-left: 2px;
+    }
+
+    .btn-remove-line:hover {
+      background: var(--bonito-danger);
+      color: #FFFFFF;
+    }
+
+    /* Toplam & İndirim Bölümü */
+    .totals-section {
+      padding: 12px 16px;
+      background: var(--bonito-cream-soft);
+      border-bottom: 1.5px solid var(--bonito-border);
+    }
+
+    .discount-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--bonito-muted);
+    }
+
+    .discount-input-wrap {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .discount-input {
+      width: 80px;
+      height: 30px;
+      padding: 0 8px;
+      border: 1.5px solid var(--bonito-border-strong);
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 800;
+      text-align: right;
+      font-family: inherit;
+      background: #FFFFFF;
+    }
+
+    .grand-total-box {
+      background: var(--bonito-brown-dark);
+      color: #FFFFFF;
+      padding: 12px 16px;
+      border-radius: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+
+    .grand-total-label {
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      color: var(--bonito-cream);
+    }
+
+    .grand-total-value {
+      font-size: 30px;
+      font-weight: 800;
+      color: #FFD8B5;
+      line-height: 1;
+    }
+
+    /* PARA ÜSTÜ HESAPLAYICI PANELİ */
+    .change-calculator-section {
+      padding: 12px 16px;
+      border-bottom: 1.5px solid var(--bonito-border);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .calc-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .calc-label {
+      font-size: 12.5px;
+      font-weight: 800;
+      color: var(--bonito-brown-dark);
+      text-transform: uppercase;
+    }
+
+    .btn-clear-cash {
+      background: none;
+      border: none;
+      color: var(--bonito-danger);
+      font-size: 11.5px;
+      font-weight: 800;
+      cursor: pointer;
+      text-decoration: underline;
+      font-family: inherit;
+    }
+
+    .cash-input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .cash-received-input {
+      width: 100%;
+      height: 46px;
+      padding: 0 40px 0 14px;
+      border: 2px solid var(--bonito-brown);
+      border-radius: 8px;
+      font-size: 22px;
+      font-weight: 800;
+      font-family: inherit;
+      color: var(--bonito-brown-dark);
+      background: #FFFFFF;
+      outline: none;
+    }
+
+    .cash-currency-suffix {
+      position: absolute;
+      right: 14px;
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--bonito-muted);
+      pointer-events: none;
+    }
+
+    /* Hızlı Banknot Seçim Izgarası */
+    .banknote-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 5px;
+    }
+
+    .banknote-btn {
+      background: var(--bonito-cream);
+      border: 1.5px solid var(--bonito-border-strong);
+      color: var(--bonito-brown-dark);
+      padding: 7px 2px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      font-family: inherit;
+      text-align: center;
+    }
+
+    .banknote-btn:hover {
+      background: var(--bonito-brown);
+      color: #FFFFFF;
+      border-color: var(--bonito-brown);
+    }
+
+    .banknote-btn.exact {
+      background: var(--bonito-accent-bg);
+      color: var(--bonito-accent);
+      border-color: #86EFAC;
+    }
+
+    .banknote-btn.exact:hover {
+      background: var(--bonito-accent);
+      color: #FFFFFF;
+    }
+
+    .banknote-add-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 5px;
+    }
+
+    .banknote-add-btn {
+      background: #FFFFFF;
+      border: 1px dashed var(--bonito-brown-light);
+      color: var(--bonito-brown);
+      padding: 5px 2px;
+      border-radius: 6px;
+      font-size: 11.5px;
+      font-weight: 800;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .banknote-add-btn:hover {
+      background: var(--bonito-cream);
+    }
+
+    /* Para Üstü Sonuç Kutusu */
+    .change-result-box {
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 2px solid var(--bonito-border);
+      background: var(--bonito-bg);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .change-result-box.positive {
+      background: var(--bonito-accent-bg);
+      border-color: var(--bonito-accent);
+      color: var(--bonito-accent);
+    }
+
+    .change-result-box.negative {
+      background: var(--bonito-danger-bg);
+      border-color: var(--bonito-danger);
+      color: var(--bonito-danger);
+    }
+
+    .change-result-label {
+      font-size: 13px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .change-result-value {
+      font-size: 26px;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    /* TAHSİLAT VE SIFIRLAMA BUTONLARI */
+    .checkout-actions {
+      padding: 12px 16px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .pay-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .btn-complete-sale {
+      padding: 13px 10px;
+      border-radius: 8px;
+      border: none;
+      font-size: 13.5px;
+      font-weight: 800;
+      cursor: pointer;
+      font-family: inherit;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      color: #FFFFFF;
+    }
+
+    .btn-complete-sale.cash {
+      background: var(--bonito-accent);
+    }
+
+    .btn-complete-sale.cash:hover {
+      background: #1F6343;
+    }
+
+    .btn-complete-sale.card {
+      background: var(--bonito-brown);
+    }
+
+    .btn-complete-sale.card:hover {
+      background: var(--bonito-brown-dark);
+    }
+
+    .btn-reset-ticket {
+      width: 100%;
+      padding: 9px;
+      border-radius: 8px;
+      border: 1.5px solid #FCA5A5;
+      background: var(--bonito-danger-bg);
+      color: var(--bonito-danger);
+      font-size: 12.5px;
+      font-weight: 800;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .btn-reset-ticket:hover {
+      background: var(--bonito-danger);
+      color: #FFFFFF;
+    }
+
+    /* 4. GÜN SONU / KASA ÖZETİ MODALI (SIFIR EFEKT) */
+    .pos-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(34, 26, 21, 0.7);
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .pos-modal-backdrop.open {
+      display: flex;
+    }
+
+    .pos-modal-card {
+      background: var(--bonito-surface);
+      border: 2px solid var(--bonito-brown);
+      border-radius: 12px;
+      width: 100%;
+      max-width: 680px;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .pos-modal-header {
+      background: var(--bonito-brown-dark);
+      color: #FFFFFF;
+      padding: 14px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .pos-modal-title {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 22px;
+      color: var(--bonito-cream);
+    }
+
+    .pos-modal-close {
+      background: var(--bonito-cream);
+      color: var(--bonito-brown-dark);
+      border: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .pos-modal-body {
+      padding: 18px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .summary-kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    @media (max-width: 600px) {
+      .summary-kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .kpi-box {
+      background: var(--bonito-cream-soft);
+      border: 1.5px solid var(--bonito-border);
+      border-radius: 8px;
+      padding: 12px;
+    }
+
+    .kpi-label {
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--bonito-muted);
+      text-transform: uppercase;
+    }
+
+    .kpi-val {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--bonito-brown-dark);
+      margin-top: 4px;
+    }
+
+    .history-list {
+      border: 1.5px solid var(--bonito-border);
+      border-radius: 8px;
+      max-height: 280px;
+      overflow-y: auto;
+    }
+
+    .history-item {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--bonito-border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      font-size: 12.5px;
+    }
+
+    .history-item:last-child {
+      border-bottom: none;
+    }
+
+    /* HIZLI DURUM BİLDİRİM ÇUBUĞU */
+    .status-banner {
+      position: fixed;
+      bottom: 16px;
+      left: 16px;
+      background: var(--bonito-brown-dark);
+      color: #FFFFFF;
+      border: 2px solid var(--bonito-cream);
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 800;
+      z-index: 200;
+      display: none;
+    }
+
+    .status-banner.show {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 1. ÜST KASA BARI -->
+  <header class="pos-topbar">
+    <div class="brand-group">
+      <svg class="brand-logo-svg" viewBox="0 0 160 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M 85 10 C 128 8, 155 35, 150 68 C 145 96, 110 108, 65 104 C 22 100, 4 82, 9 46 C 14 16, 45 12, 85 10 Z" stroke="#F5ECE4" stroke-width="5"/>
+        <path d="M 28 84 C 21 82, 23 75, 33 68 C 50 56, 92 34, 118 24 C 130 19, 137 25, 132 32 C 122 46, 80 72, 45 84 C 36 87, 31 86, 28 84 Z" stroke="#F5ECE4" stroke-width="4.5"/>
+        <path d="M 54 53 C 58 45, 68 47, 72 58" stroke="#F5ECE4" stroke-width="4" stroke-linecap="round"/>
+        <path d="M 77 44 C 82 36, 92 38, 95 49" stroke="#F5ECE4" stroke-width="4" stroke-linecap="round"/>
+        <path d="M 100 35 C 104 27, 114 29, 117 40" stroke="#F5ECE4" stroke-width="4" stroke-linecap="round"/>
+      </svg>
+      <div>
+        <div class="brand-name">BONITO KASA / POS</div>
+        <div class="brand-meta">sandwich and more • @bonitowich • 0532 342 34 43</div>
+      </div>
+    </div>
+
+    <div class="topbar-actions">
+      <div class="clock-badge" id="liveClock">00:00:00</div>
+      <button class="top-btn secondary" onclick="restoreLastTicket()" title="En son kapatılan veya silinen adisyonu geri getirir">
+        ↩ Son Adisyonu Geri Yükle
+      </button>
+      <button class="top-btn" onclick="openSummaryModal()">
+        📊 Gün Sonu / Kasa Özeti (<span id="topDailyCount">0</span>)
+      </button>
+    </div>
+  </header>
+
+  <!-- 2. ANA ÇALIŞMA ALANI -->
+  <div class="pos-workspace">
+
+    <!-- SOL TARAF: MENÜ SEÇİM PANELİ -->
+    <section class="catalog-panel">
+      <div class="controls-bar">
+        <!-- Kategori Sekmeleri -->
+        <div class="category-tabs-row" id="categoryTabs">
+          <button class="cat-tab active" onclick="setCategory('Tümü')">Tümü (26)</button>
+          <button class="cat-tab" onclick="setCategory('Sandviç & Waffle')">🥖 Sandviç & Waffle (7)</button>
+          <button class="cat-tab" onclick="setCategory('Kahveler')">☕ Kahveler (9)</button>
+          <button class="cat-tab" onclick="setCategory('İçecekler')">🥤 İçecekler (10)</button>
+        </div>
+
+        <!-- Hızlı Arama & Özel Tutar Ekleme -->
+        <div class="search-and-custom-row">
+          <div class="search-box">
+            <input type="text" id="searchInput" class="search-input" placeholder="Ürün veya içerik ara (Örn: Patsowich, Latte, Soda, Çemen...)" autocomplete="off">
+            <button id="searchClearBtn" class="search-clear" onclick="clearSearch()">✕</button>
+          </div>
+
+          <div class="custom-item-form">
+            <input type="text" id="customNameInput" class="custom-input-name" placeholder="Ekstra / Özel Not">
+            <input type="number" id="customPriceInput" class="custom-input-price" placeholder="Tutar ₺" min="1">
+            <button class="btn-custom-add" onclick="addCustomItem()">+ Ekle</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ürün Kartları Listesi -->
+      <div id="catalogContainer"></div>
+    </section>
+
+    <!-- SAĞ TARAF: ADİSYON, TOPLAM FİYAT VE PARA ÜSTÜ HESAPLAYICI -->
+    <aside class="register-panel">
+      <div class="register-header">
+        <h2 class="register-title">Müşteri Adisyonu</h2>
+        <span class="register-count-pill" id="ticketTotalItems">0 Ürün</span>
+      </div>
+
+      <!-- Seçilen Ürünler Listesi -->
+      <div class="ticket-items-list" id="ticketItemsList">
+        <div class="ticket-empty">
+          Soldaki menüden müşterinin yediği / içtiği ürünlere tıklayarak adisyona ekleyin.
+        </div>
+      </div>
+
+      <!-- İndirim ve Genel Toplam -->
+      <div class="totals-section">
+        <div class="discount-row">
+          <span>İndirim / İkram Tutarı (₺):</span>
+          <div class="discount-input-wrap">
+            <input type="number" id="discountInput" class="discount-input" value="0" min="0" oninput="recalculateRegister()">
+            <span>₺</span>
+          </div>
+        </div>
+
+        <div class="grand-total-box">
+          <span class="grand-total-label">TOPLAM TUTAR</span>
+          <span class="grand-total-value" id="grandTotalDisplay">0 ₺</span>
+        </div>
+      </div>
+
+      <!-- PARA ÜSTÜ HESAPLAYICI -->
+      <div class="change-calculator-section">
+        <div class="calc-header-row">
+          <span class="calc-label">💵 Alınan Nakit & Para Üstü</span>
+          <button class="btn-clear-cash" onclick="setReceivedCash(0)">Sıfırla</button>
+        </div>
+
+        <div class="cash-input-wrapper">
+          <input type="number" id="cashReceivedInput" class="cash-received-input" placeholder="Alınan Nakit Girin..." min="0" oninput="recalculateChange()">
+          <span class="cash-currency-suffix">₺</span>
+        </div>
+
+        <!-- Doğrudan Banknot Seçimi -->
+        <div class="banknote-grid">
+          <button class="banknote-btn exact" onclick="setExactCash()">Tam</button>
+          <button class="banknote-btn" onclick="setReceivedCash(50)">50 ₺</button>
+          <button class="banknote-btn" onclick="setReceivedCash(100)">100 ₺</button>
+          <button class="banknote-btn" onclick="setReceivedCash(200)">200 ₺</button>
+          <button class="banknote-btn" onclick="setReceivedCash(500)">500 ₺</button>
+          <button class="banknote-btn" onclick="setReceivedCash(1000)">1000 ₺</button>
+        </div>
+
+        <!-- Üzerine Banknot Ekleme -->
+        <div class="banknote-add-grid">
+          <button class="banknote-add-btn" onclick="addReceivedCash(10)">+10 ₺</button>
+          <button class="banknote-add-btn" onclick="addReceivedCash(20)">+20 ₺</button>
+          <button class="banknote-add-btn" onclick="addReceivedCash(50)">+50 ₺</button>
+          <button class="banknote-add-btn" onclick="addReceivedCash(100)">+100 ₺</button>
+          <button class="banknote-add-btn" onclick="addReceivedCash(200)">+200 ₺</button>
+        </div>
+
+        <!-- Para Üstü / Eksik Tutar Göstergesi -->
+        <div class="change-result-box" id="changeResultBox">
+          <span class="change-result-label" id="changeResultLabel">PARA ÜSTÜ</span>
+          <span class="change-result-value" id="changeResultValue">0 ₺</span>
+        </div>
+      </div>
+
+      <!-- Satışı Tamamla / Tahsilat Butonları -->
+      <div class="checkout-actions">
+        <div class="pay-row">
+          <button class="btn-complete-sale cash" onclick="completeSale('Nakit')">
+            ✅ Nakit Tahsil Et
+          </button>
+          <button class="btn-complete-sale card" onclick="completeSale('Kart / IBAN')">
+            💳 Kart / IBAN
+          </button>
+        </div>
+        <button class="btn-reset-ticket" onclick="clearCurrentTicket()">
+          🗑️ Adisyonu Temizle (Yeni Müşteri)
+        </button>
+      </div>
+    </aside>
+
+  </div>
+
+  <!-- 3. GÜN SONU / KASA ÖZETİ MODALI -->
+  <div class="pos-modal-backdrop" id="summaryModalBackdrop" onclick="closeSummaryModal(event)">
+    <div class="pos-modal-card" onclick="event.stopPropagation()">
+      <div class="pos-modal-header">
+        <h3 class="pos-modal-title">Gün Sonu & Kasa Satış Özeti</h3>
+        <button class="pos-modal-close" onclick="closeSummaryModal()">✕</button>
+      </div>
+
+      <div class="pos-modal-body">
+        <div class="summary-kpi-grid">
+          <div class="kpi-box">
+            <div class="kpi-label">Toplam Ciro</div>
+            <div class="kpi-val" id="kpiTotalRevenue">0 ₺</div>
+          </div>
+          <div class="kpi-box">
+            <div class="kpi-label">Nakit Toplam</div>
+            <div class="kpi-val" id="kpiCashRevenue">0 ₺</div>
+          </div>
+          <div class="kpi-box">
+            <div class="kpi-label">Kart / IBAN</div>
+            <div class="kpi-val" id="kpiCardRevenue">0 ₺</div>
+          </div>
+          <div class="kpi-box">
+            <div class="kpi-label">İşlem Adedi</div>
+            <div class="kpi-val" id="kpiOrderCount">0</div>
+          </div>
+        </div>
+
+        <div>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <strong style="font-size:13.5px; color:var(--bonito-brown-dark);">Son Tamamlanan Satışlar</strong>
+            <div style="display:flex; gap:8px;">
+              <button class="top-btn" style="padding:4px 10px; font-size:11.5px;" onclick="copySummaryReport()">📋 Raporu Kopyala</button>
+              <button class="btn-card-minus" onclick="resetDailySales()">Gün Sonu Sıfırla</button>
+            </div>
+          </div>
+          <div class="history-list" id="salesHistoryList"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HIZLI BİLDİRİM KUTUSU -->
+  <div class="status-banner" id="statusBanner"></div>
+
+  <!-- JAVASCRIPT: ANLIK HESAPLAMA VE KASİYER POS MANTIĞI -->
+  <script>
+    /**
+     * MENÜ FOTOĞRAFINDAN BİREBİR ALINAN BONITO MENÜ LİSTESİ VE FİYATLARI
+     */
+    const MENU_ITEMS = [
+      // 1. SANDVİÇ & WAFFLE
+      {
+        id: "m1",
+        menuCode: "MENÜ 1",
+        category: "Sandviç & Waffle",
+        name: "ÖĞRENCİWICH",
+        price: 120,
+        ingredients: "Marul, Domates, Salam, Kaşar"
+      },
+      {
+        id: "m2",
+        menuCode: "MENÜ 2",
+        category: "Sandviç & Waffle",
+        name: "ANNEWICH",
+        price: 250,
+        ingredients: "Zeytin ezmesi, Beyaz peynir, Labne, Çemen, Yumurta, Hindi füme, Salatalık, Domates, Zeytin, Salam"
+      },
+      {
+        id: "m3",
+        menuCode: "MENÜ 3",
+        category: "Sandviç & Waffle",
+        name: "PATSOWICH",
+        price: 250,
+        ingredients: "Patates kızartması, Menemen sos, Kaşar peyniri, Beyaz peynir, Labne, Marul, Salam, Çemen"
+      },
+      {
+        id: "m4",
+        menuCode: "MENÜ 4",
+        category: "Sandviç & Waffle",
+        name: "TONWICH",
+        price: 300,
+        ingredients: "Ton balığı, Mısır, Roka, Marul, Dereotu, Maydanoz, Domates, Salatalık"
+      },
+      {
+        id: "m5",
+        menuCode: "MENÜ 5 • SPESİYAL",
+        category: "Sandviç & Waffle",
+        name: "BONITOWICH",
+        price: 300,
+        ingredients: "Kuru et, Ezine peyniri, Pesto sos, Marul, Roka"
+      },
+      {
+        id: "m6",
+        menuCode: "MENÜ 6",
+        category: "Sandviç & Waffle",
+        name: "KEKİKLİWICH",
+        price: 300,
+        ingredients: "Zeytin ezmesi, Ezine peyniri, Domates, Roka, Kuru et, Kekik, Dereotu, Zeytin"
+      },
+      {
+        id: "w1",
+        menuCode: "TATLI",
+        category: "Sandviç & Waffle",
+        name: "KOVA WAFFLE",
+        price: 250,
+        ingredients: "Taze meyveler, Belçika çikolatası ve çıtır waffle parçaları"
+      },
+
+      // 2. KAHVELER
+      { id: "k1", category: "Kahveler", name: "Americano", price: 140, ingredients: "Sıcak / Soğuk" },
+      { id: "k2", category: "Kahveler", name: "Latte", price: 160, ingredients: "Sıcak / Soğuk" },
+      { id: "k3", category: "Kahveler", name: "Aromalı Latte", price: 180, ingredients: "Vanilya, Karamel, Fındık vb." },
+      { id: "k4", category: "Kahveler", name: "Cappuccino", price: 160, ingredients: "Bol süt köpüklü espresso" },
+      { id: "k5", category: "Kahveler", name: "Espresso", price: 80, ingredients: "Tek / Double Shot" },
+      { id: "k6", category: "Kahveler", name: "Türk Kahvesi", price: 100, ingredients: "Geleneksel köz tadında" },
+      { id: "k7", category: "Kahveler", name: "Filtre Kahve", price: 140, ingredients: "Taze demlenmiş" },
+      { id: "k8", category: "Kahveler", name: "Mocha", price: 200, ingredients: "Çikolatalı & Sütlü Espresso" },
+      { id: "k9", category: "Kahveler", name: "Flat White", price: 180, ingredients: "Çift shot espresso & ince süt" },
+
+      // 3. İÇECEKLER
+      { id: "i1", category: "İçecekler", name: "Limonata", price: 120, ingredients: "Ev yapımı taze naneli" },
+      { id: "i2", category: "İçecekler", name: "Çay", price: 20, ingredients: "Taze demleme bardak çay" },
+      { id: "i3", category: "İçecekler", name: "Su", price: 15, ingredients: "Pet şişe su" },
+      { id: "i4", category: "İçecekler", name: "Kola", price: 80, ingredients: "Kutu içecek" },
+      { id: "i5", category: "İçecekler", name: "Fanta", price: 80, ingredients: "Kutu içecek" },
+      { id: "i6", category: "İçecekler", name: "Ayran", price: 30, ingredients: "Soğuk ayran" },
+      {
+        id: "i7",
+        category: "İçecekler",
+        name: "Meyve Suyu",
+        price: 25,
+        ingredients: "Alt çeşide tıklayarak veya doğrudan ekleyebilirsiniz",
+        variants: ["Karpuz/Çilek", "Kayısı", "Karışık", "Şeftali", "Orman Meyveli"]
+      },
+      {
+        id: "i8",
+        category: "İçecekler",
+        name: "Süt",
+        price: 25,
+        ingredients: "Alt çeşide tıklayarak veya doğrudan ekleyebilirsiniz",
+        variants: ["Çikolatalı", "Çilekli"]
+      },
+      {
+        id: "i9",
+        category: "İçecekler",
+        name: "Meyveli Soda",
+        price: 40,
+        ingredients: "Alt çeşide tıklayarak veya doğrudan ekleyebilirsiniz",
+        variants: ["Karpuz/Çilek", "Karadut/Frenk Üzümü", "Elma", "Limon"]
+      },
+      { id: "i10", category: "İçecekler", name: "Sade Soda", price: 30, ingredients: "Doğal maden suyu" }
+    ];
+
+    // Uygulama Durumu (State)
+    let activeCategory = "Tümü";
+    let ticket = {}; // { key: { key, baseId, name, price, qty } }
+    let lastBackupTicket = null;
+    let salesHistory = [];
+
+    // Başlangıç
+    function initPOS() {
+      loadStorageData();
+      updateClock();
+      setInterval(updateClock, 1000);
+      renderCatalog();
+      renderTicket();
+      updateDailyCounter();
+    }
+
+    function updateClock() {
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+      document.getElementById("liveClock").textContent = timeStr;
+    }
+
+    function loadStorageData() {
+      try {
+        const savedTicket = localStorage.getItem("bonito_pos_active_ticket");
+        if (savedTicket) ticket = JSON.parse(savedTicket);
+
+        const savedBackup = localStorage.getItem("bonito_pos_last_backup");
+        if (savedBackup) lastBackupTicket = JSON.parse(savedBackup);
+
+        const savedSales = localStorage.getItem("bonito_pos_sales_history");
+        if (savedSales) salesHistory = JSON.parse(savedSales);
+      } catch (e) {
+        ticket = {};
+        salesHistory = [];
+      }
+    }
+
+    function saveTicketState() {
+      try {
+        localStorage.setItem("bonito_pos_active_ticket", JSON.stringify(ticket));
+      } catch (e) {}
+    }
+
+    // Türkçe Karakter Uyumlu Arama Normalizasyonu
+    function normalizeText(str) {
+      if (!str) return "";
+      return str
+        .replace(/İ/g, "i")
+        .replace(/I/g, "ı")
+        .replace(/Ğ/g, "ğ")
+        .replace(/Ü/g, "ü")
+        .replace(/Ş/g, "ş")
+        .replace(/Ö/g, "ö")
+        .replace(/Ç/g, "ç")
+        .toLowerCase()
+        .trim();
+    }
+
+    // Kategori Seçimi
+    window.setCategory = function(cat) {
+      activeCategory = cat;
+      const buttons = document.querySelectorAll("#categoryTabs .cat-tab");
+      buttons.forEach(btn => {
+        if (btn.textContent.includes(cat)) {
+          btn.classList.add("active");
+        } else {
+          btn.classList.remove("active");
+        }
+      });
+      renderCatalog();
+    };
+
+    // Arama Kutusu
+    const searchInput = document.getElementById("searchInput");
+    const searchClearBtn = document.getElementById("searchClearBtn");
+
+    searchInput.addEventListener("input", () => {
+      searchClearBtn.style.display = searchInput.value.trim().length > 0 ? "block" : "none";
+      renderCatalog();
+    });
+
+    window.clearSearch = function() {
+      searchInput.value = "";
+      searchClearBtn.style.display = "none";
+      renderCatalog();
+      searchInput.focus();
+    };
+
+    // Bir ana ürünün adisyondaki toplam adedini hesapla (alt çeşitler dahil)
+    function getBaseItemTotalQty(baseId) {
+      let sum = 0;
+      for (const k in ticket) {
+        if (ticket[k].baseId === baseId) {
+          sum += ticket[k].qty;
+        }
+      }
+      return sum;
+    }
+
+    // SOL KATALOG IZGARASINI ÇİZ
+    function renderCatalog() {
+      const query = normalizeText(searchInput.value);
+      const container = document.getElementById("catalogContainer");
+
+      const filtered = MENU_ITEMS.filter(item => {
+        const matchCat = activeCategory === "Tümü" || item.category === activeCategory;
+        const matchSearch = query === "" ||
+          normalizeText(item.name).includes(query) ||
+          normalizeText(item.ingredients).includes(query) ||
+          normalizeText(item.menuCode || "").includes(query) ||
+          (item.variants && item.variants.some(v => normalizeText(v).includes(query)));
+
+        return matchCat && matchSearch;
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div style="background:#fff; border:1.5px solid var(--bonito-border); border-radius:10px; padding:32px; text-align:center; color:var(--bonito-muted); font-weight:700;">
+            Aranan kriterde ürün bulunamadı.
+          </div>
+        `;
+        return;
+      }
+
+      // Kategorilere göre grupla
+      const groups = {};
+      filtered.forEach(item => {
+        if (!groups[item.category]) groups[item.category] = [];
+        groups[item.category].push(item);
+      });
+
+      let html = "";
+      for (const [categoryName, items] of Object.entries(groups)) {
+        html += `
+          <div class="category-block">
+            <div class="category-block-header">
+              <span>${categoryName}</span>
+              <span class="sub">${items.length} Ürün • Tıkla & Ekle</span>
+            </div>
+            <div class="products-grid">
+        `;
+
+        items.forEach(item => {
+          const totalQtyInTicket = getBaseItemTotalQty(item.id);
+          const hasVariants = item.variants && item.variants.length > 0;
+
+          html += `
+            <div class="pos-product-card ${totalQtyInTicket > 0 ? 'in-ticket' : ''}" onclick="addItemToTicket('${item.id}', '')">
+              <div>
+                <div class="card-top-row">
+                  <div>
+                    ${item.menuCode ? `<div class="menu-num-tag">${item.menuCode}</div>` : ''}
+                    <div class="product-name">${item.name}</div>
+                  </div>
+                  <div class="product-price-badge">${item.price} ₺</div>
+                </div>
+                ${item.ingredients ? `<div class="product-ingredients" style="margin-top:4px;">${item.ingredients}</div>` : ''}
+              </div>
+
+              ${hasVariants ? `
+                <div class="variants-wrap" onclick="event.stopPropagation();">
+                  ${item.variants.map(v => `
+                    <button class="variant-chip" onclick="addItemToTicket('${item.id}', '${v}')">+ ${v}</button>
+                  `).join("")}
+                </div>
+              ` : ''}
+
+              ${totalQtyInTicket > 0 ? `
+                <div class="card-ticket-controls" onclick="event.stopPropagation();">
+                  <span class="in-ticket-Readout">Adisyonda: ${totalQtyInTicket} Adet</span>
+                  <button class="btn-card-minus" onclick="decrementBaseItem('${item.id}')">−1 Azalt</button>
+                </div>
+              ` : ''}
+            </div>
+          `;
+        });
+
+        html += `
+            </div>
+          </div>
+        `;
+      }
+
+      container.innerHTML = html;
+    }
+
+    // ADİSYONA ÜRÜN EKLEME
+    window.addItemToTicket = function(baseId, variantName) {
+      const product = MENU_ITEMS.find(i => i.id === baseId);
+      if (!product) return;
+
+      const key = variantName ? `${baseId}__${variantName}` : baseId;
+      const displayName = variantName ? `${product.name} (${variantName})` : product.name;
+
+      if (!ticket[key]) {
+        ticket[key] = {
+          key: key,
+          baseId: baseId,
+          name: displayName,
+          price: product.price,
+          qty: 1
+        };
+      } else {
+        ticket[key].qty += 1;
+      }
+
+      saveTicketState();
+      renderCatalog();
+      renderTicket();
+    };
+
+    // Kart üzerinden hızlı -1 azaltma
+    window.decrementBaseItem = function(baseId) {
+      // Bu baseId'ye sahip son eklenen kalemi bul ve 1 azalt
+      const keys = Object.keys(ticket).filter(k => ticket[k].baseId === baseId);
+      if (keys.length === 0) return;
+
+      const targetKey = keys[keys.length - 1];
+      ticket[targetKey].qty -= 1;
+      if (ticket[targetKey].qty <= 0) {
+        delete ticket[targetKey];
+      }
+
+      saveTicketState();
+      renderCatalog();
+      renderTicket();
+    };
+
+    // Özel Tutar / Ekstra Ürün Ekleme
+    window.addCustomItem = function() {
+      const nameEl = document.getElementById("customNameInput");
+      const priceEl = document.getElementById("customPriceInput");
+
+      const nameVal = nameEl.value.trim() || "Ekstra / Özel";
+      const priceVal = parseFloat(priceEl.value);
+
+      if (!priceVal || priceVal <= 0) {
+        showStatus("Lütfen geçerli bir ekstra tutar (₺) girin.");
+        priceEl.focus();
+        return;
+      }
+
+      const customKey = "custom_" + Date.now();
+      ticket[customKey] = {
+        key: customKey,
+        baseId: customKey,
+        name: nameVal,
+        price: priceVal,
+        qty: 1
+      };
+
+      nameEl.value = "";
+      priceEl.value = "";
+
+      saveTicketState();
+      renderTicket();
+      showStatus(`+ ${nameVal} (${priceVal} ₺) adisyona eklendi.`);
+    };
+
+    // Adisyon Satır Miktarı Değiştirme
+    window.changeLineQty = function(key, delta) {
+      if (!ticket[key]) return;
+      ticket[key].qty += delta;
+      if (ticket[key].qty <= 0) {
+        delete ticket[key];
+      }
+      saveTicketState();
+      renderCatalog();
+      renderTicket();
+    };
+
+    window.removeLineItem = function(key) {
+      if (!ticket[key]) return;
+      delete ticket[key];
+      saveTicketState();
+      renderCatalog();
+      renderTicket();
+    };
+
+    // SAĞ ADİSYON LİSTESİNİ VE TOPLAMI HESAPLA
+    function renderTicket() {
+      const listEl = document.getElementById("ticketItemsList");
+      const countBadge = document.getElementById("ticketTotalItems");
+
+      const keys = Object.keys(ticket);
+      let totalQty = 0;
+
+      if (keys.length === 0) {
+        listEl.innerHTML = `
+          <div class="ticket-empty">
+            Soldaki menüden müşterinin yediği / içtiği ürünlere tıklayarak adisyona ekleyin.
+          </div>
+        `;
+        countBadge.textContent = "0 Ürün";
+        recalculateRegister();
+        return;
+      }
+
+      let html = "";
+      keys.forEach(key => {
+        const item = ticket[key];
+        totalQty += item.qty;
+        const lineTotal = item.price * item.qty;
+
+        html += `
+          <div class="ticket-row">
+            <div class="ticket-item-info">
+              <div class="ticket-item-name">${item.name}</div>
+              <div class="ticket-item-unit">${item.price} ₺ / adet</div>
+            </div>
+            <div class="ticket-row-controls">
+              <button class="qty-ctrl-btn" onclick="changeLineQty('${item.key}', -1)">−</button>
+              <span class="qty-val">${item.qty}</span>
+              <button class="qty-ctrl-btn" onclick="changeLineQty('${item.key}', 1)">+</button>
+              <div class="ticket-line-total">${lineTotal} ₺</div>
+              <button class="btn-remove-line" onclick="removeLineItem('${item.key}')" title="Satırı Sil">✕</button>
+            </div>
+          </div>
+        `;
+      });
+
+      listEl.innerHTML = html;
+      countBadge.textContent = `${totalQty} Ürün`;
+      recalculateRegister();
+    }
+
+    // TOPLAM TUTAR VE PARA ÜSTÜ HESAPLAMA
+    function getNetGrandTotal() {
+      let subtotal = 0;
+      for (const k in ticket) {
+        subtotal += ticket[k].price * ticket[k].qty;
+      }
+      const discount = parseFloat(document.getElementById("discountInput").value) || 0;
+      return Math.max(0, subtotal - discount);
+    }
+
+    window.recalculateRegister = function() {
+      const netTotal = getNetGrandTotal();
+      document.getElementById("grandTotalDisplay").textContent = `${netTotal.toLocaleString("tr-TR")} ₺`;
+      recalculateChange();
+    };
+
+    window.recalculateChange = function() {
+      const netTotal = getNetGrandTotal();
+      const cashInputVal = document.getElementById("cashReceivedInput").value;
+      const received = parseFloat(cashInputVal);
+
+      const box = document.getElementById("changeResultBox");
+      const label = document.getElementById("changeResultLabel");
+      const valDisplay = document.getElementById("changeResultValue");
+
+      box.classList.remove("positive", "negative");
+
+      if (isNaN(received) || received <= 0) {
+        label.textContent = "PARA ÜSTÜ";
+        valDisplay.textContent = "0 ₺";
+        return;
+      }
+
+      const diff = received - netTotal;
+      if (diff >= 0) {
+        box.classList.add("positive");
+        label.textContent = "VERİLECEK PARA ÜSTÜ";
+        valDisplay.textContent = `${diff.toLocaleString("tr-TR")} ₺`;
+      } else {
+        box.classList.add("negative");
+        label.textContent = "EKSİK / KALAN TUTAR";
+        valDisplay.textContent = `${Math.abs(diff).toLocaleString("tr-TR")} ₺`;
+      }
+    };
+
+    // Hızlı Banknot Fonksiyonları
+    window.setReceivedCash = function(amount) {
+      const input = document.getElementById("cashReceivedInput");
+      input.value = amount > 0 ? amount : "";
+      recalculateChange();
+    };
+
+    window.setExactCash = function() {
+      const netTotal = getNetGrandTotal();
+      document.getElementById("cashReceivedInput").value = netTotal > 0 ? netTotal : "";
+      recalculateChange();
+    };
+
+    window.addReceivedCash = function(addAmount) {
+      const input = document.getElementById("cashReceivedInput");
+      const current = parseFloat(input.value) || 0;
+      input.value = current + addAmount;
+      recalculateChange();
+    };
+
+    // SATIŞI TAMAMLA (NAKİT VEYA KART)
+    window.completeSale = function(paymentMethod) {
+      const keys = Object.keys(ticket);
+      if (keys.length === 0) {
+        showStatus("Adisyonda henüz ürün yok!");
+        return;
+      }
+
+      const netTotal = getNetGrandTotal();
+      const summaryItems = keys.map(k => `${ticket[k].qty}x ${ticket[k].name}`).join(", ");
+
+      // Son işlemi geri yükleyebilmek için yedekle
+      lastBackupTicket = JSON.parse(JSON.stringify(ticket));
+      localStorage.setItem("bonito_pos_last_backup", JSON.stringify(lastBackupTicket));
+
+      // Satış geçmişine kaydet
+      const record = {
+        id: Date.now(),
+        time: new Date().toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" }),
+        method: paymentMethod,
+        total: netTotal,
+        summary: summaryItems
+      };
+
+      salesHistory.unshift(record);
+      try {
+        localStorage.setItem("bonito_pos_sales_history", JSON.stringify(salesHistory));
+      } catch (e) {}
+
+      // Adisyonu sıfırla
+      ticket = {};
+      document.getElementById("discountInput").value = "0";
+      document.getElementById("cashReceivedInput").value = "";
+      saveTicketState();
+      renderCatalog();
+      renderTicket();
+      updateDailyCounter();
+
+      showStatus(`✅ ${netTotal} ₺ (${paymentMethod}) tahsil edildi. Yeni müşteriye hazır.`);
+    };
+
+    // ADİSYONU TEMİZLE
+    window.clearCurrentTicket = function() {
+      if (Object.keys(ticket).length === 0) {
+        document.getElementById("discountInput").value = "0";
+        document.getElementById("cashReceivedInput").value = "";
+        recalculateRegister();
+        return;
+      }
+
+      lastBackupTicket = JSON.parse(JSON.stringify(ticket));
+      localStorage.setItem("bonito_pos_last_backup", JSON.stringify(lastBackupTicket));
+
+      ticket = {};
+      document.getElementById("discountInput").value = "0";
+      document.getElementById("cashReceivedInput").value = "";
+      saveTicketState();
+      renderCatalog();
+      renderTicket();
+      showStatus("🗑️ Adisyon temizlendi. (Gerekirse üstten geri yükleyebilirsiniz)");
+    };
+
+    // SON ADİSYONU GERİ YÜKLE
+    window.restoreLastTicket = function() {
+      if (!lastBackupTicket || Object.keys(lastBackupTicket).length === 0) {
+        showStatus("Geri yüklenecek yakın tarihli bir adisyon bulunamadı.");
+        return;
+      }
+
+      ticket = JSON.parse(JSON.stringify(lastBackupTicket));
+      saveTicketState();
+      renderCatalog();
+      renderTicket();
+      showStatus("↩ Son kapatılan/silinen adisyon geri yüklendi.");
+    };
+
+    // GÜN SONU / KASA ÖZETİ MODALI
+    function updateDailyCounter() {
+      document.getElementById("topDailyCount").textContent = salesHistory.length;
+    }
+
+    window.openSummaryModal = function() {
+      let totalRev = 0;
+      let cashRev = 0;
+      let cardRev = 0;
+
+      salesHistory.forEach(s => {
+        totalRev += s.total;
+        if (s.method === "Nakit") cashRev += s.total;
+        else cardRev += s.total;
+      });
+
+      document.getElementById("kpiTotalRevenue").textContent = `${totalRev.toLocaleString("tr-TR")} ₺`;
+      document.getElementById("kpiCashRevenue").textContent = `${cashRev.toLocaleString("tr-TR")} ₺`;
+      document.getElementById("kpiCardRevenue").textContent = `${cardRev.toLocaleString("tr-TR")} ₺`;
+      document.getElementById("kpiOrderCount").textContent = salesHistory.length;
+
+      const listEl = document.getElementById("salesHistoryList");
+      if (salesHistory.length === 0) {
+        listEl.innerHTML = `<div style="padding:24px; text-align:center; color:var(--bonito-muted); font-weight:600;">Bugün henüz tahsilat kaydedilmedi.</div>`;
+      } else {
+        listEl.innerHTML = salesHistory.map((s, idx) => `
+          <div class="history-item">
+            <div>
+              <strong>#${salesHistory.length - idx} • ${s.time} (${s.method})</strong>
+              <div style="color:var(--bonito-muted); font-size:11.5px; margin-top:2px;">${s.summary}</div>
+            </div>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <strong style="font-size:14px; color:var(--bonito-brown-dark); white-space:nowrap;">${s.total} ₺</strong>
+              <button class="btn-remove-line" onclick="deleteHistoryRecord(${s.id})" title="Kaydı Sil">✕</button>
+            </div>
+          </div>
+        `).join("");
+      }
+
+      document.getElementById("summaryModalBackdrop").classList.add("open");
+    };
+
+    window.closeSummaryModal = function(e) {
+      if (e && e.target !== e.currentTarget) return;
+      document.getElementById("summaryModalBackdrop").classList.remove("open");
+    };
+
+    window.deleteHistoryRecord = function(id) {
+      salesHistory = salesHistory.filter(s => s.id !== id);
+      localStorage.setItem("bonito_pos_sales_history", JSON.stringify(salesHistory));
+      updateDailyCounter();
+      openSummaryModal();
+    };
+
+    window.resetDailySales = function() {
+      salesHistory = [];
+      localStorage.removeItem("bonito_pos_sales_history");
+      updateDailyCounter();
+      openSummaryModal();
+      showStatus("Gün sonu verileri sıfırlandı.");
+    };
+
+    window.copySummaryReport = function() {
+      let totalRev = 0, cashRev = 0, cardRev = 0;
+      salesHistory.forEach(s => {
+        totalRev += s.total;
+        if (s.method === "Nakit") cashRev += s.total;
+        else cardRev += s.total;
+      });
+
+      const dateStr = new Date().toLocaleDateString("tr-TR");
+      const reportText = `BONITO GÜN SONU RAPORU (${dateStr})\nToplam Ciro: ${totalRev} TL\nNakit: ${cashRev} TL\nKart/IBAN: ${cardRev} TL\nToplam İşlem: ${salesHistory.length}`;
+
+      const ta = document.createElement("textarea");
+      ta.value = reportText;
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand("copy"); } catch (e) {}
+      document.body.removeChild(ta);
+      showStatus("📋 Gün sonu raporu panoya kopyalandı.");
+    };
+
+    // HIZLI DURUM BİLDİRİMİ
+    let statusTimer = null;
+    function showStatus(msg) {
+      const banner = document.getElementById("statusBanner");
+      banner.textContent = msg;
+      banner.classList.add("show");
+      clearTimeout(statusTimer);
+      statusTimer = setTimeout(() => {
+        banner.classList.remove("show");
+      }, 2200);
+    }
+
+    window.addEventListener("DOMContentLoaded", initPOS);
+  </script>
+</body>
+</html>
